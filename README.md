@@ -1,4 +1,4 @@
-# InterviewPreparation
+# Interview Preparation
 > Coding questions
 > 
 > JavaScripts Concepts
