@@ -1,6 +1,6 @@
 (function () {
   // to store callbacks with their key as the id
-  const timers = {};
+  const callbackMap = {};
 
   // to generate random six length alphanumeric string
   function generateId() {
@@ -15,11 +15,11 @@
 
   // to check and invoke callbacks when current time exceeds callback execution time
   function check() {
-    if (Object.keys(timers).length === 0) return;
+    if (Object.keys(callbackMap).length === 0) return;
 
     const now = Date.now();
-    for (let timerId in timers) {
-      const timer = timers[timerId];
+    for (let timerId in callbackMap) {
+      const timer = callbackMap[timerId];
       if (timer && now > timer.execTime) {
         timer.execTime = Date.now() + timer.delay;
         timer.callback();
@@ -30,28 +30,28 @@
   }
 
   // setInterval polyfill
-  globalThis.mySetInterval = function (callback, delay) {
+  globalThis.mySetInterval = function (callback, delay = 0) {
     if (typeof callback !== 'function')
       throw new Error('callback should be a function');
-    if (typeof delay !== 'number' || delay < 0)
+    if (typeof delay !== 'number')
       throw new Error('delay should be a positive number');
 
     const timerId = generateId();
 
-    timers[timerId] = {
+    callbackMap[timerId] = {
       callback,
       delay,
       execTime: Date.now() + delay,
     };
 
-    if (Object.keys(timers).length === 1) requestIdleCallback(check);
+    if (Object.keys(callbackMap).length === 1) requestIdleCallback(check);
 
     return timerId;
   };
 
   // clearInterval polyfill
   globalThis.myClearInterval = function (id) {
-    if (timers[id]) delete timers[id];
+    if (callbackMap[id]) delete callbackMap[id];
     return;
   };
 })();
@@ -62,5 +62,3 @@ const id = mySetInterval(() => {
   console.log(++count);
   if (count === 5) myClearInterval(id);
 }, 2000);
-
-console.log(id);
