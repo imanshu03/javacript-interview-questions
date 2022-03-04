@@ -1,5 +1,5 @@
 (function () {
-  // to store callbacks with their key as the id
+  // to store callbacks with their id as the key
   const callbackMap = {};
 
   // to generate random six length alphanumeric string
