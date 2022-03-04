@@ -1,9 +1,11 @@
 (function () {
+  // to store callbacks with their key as the id
   const timers = {};
 
+  // to generate random six length alphanumeric string
   function generateId() {
-    const chars = "ABCDEF123456";
-    let key = "";
+    const chars = 'ABCDEF123456';
+    let key = '';
     for (let i = 0; i < 6; i++) {
       const idx = Math.floor(Math.random() * chars.length);
       key += chars[idx];
@@ -11,39 +13,44 @@
     return key;
   }
 
+  // to check and invoke callbacks when current time exceeds callback execution time
   function check() {
     if (Object.keys(timers).length === 0) return;
 
     const now = Date.now();
     for (let timerId in timers) {
-      if (timers[timerId] && now > timers[timerId].execTime) {
-        timers[timerId].execTime = Date.now() + timers[timerId].delay;
-        timers[timerId].cb();
+      const timer = timers[timerId];
+      if (timer && now > timer.execTime) {
+        timer.execTime = Date.now() + timer.delay;
+        timer.callback();
       }
     }
 
     requestIdleCallback(check);
   }
 
-  window.mySetInterval = (cb, delay) => {
-    if (typeof cb !== "function") return new Error("cb is not a function");
-    if (typeof delay !== "number" || delay < 0)
-      return new Error("delay is not a positive number");
+  // setInterval polyfill
+  globalThis.mySetInterval = function (callback, delay) {
+    if (typeof callback !== 'function')
+      throw new Error('callback should be a function');
+    if (typeof delay !== 'number' || delay < 0)
+      throw new Error('delay should be a positive number');
 
-    const id = generateId();
+    const timerId = generateId();
 
-    timers[id] = {
-      cb,
+    timers[timerId] = {
+      callback,
       delay,
-      execTime: Date.now() + delay
+      execTime: Date.now() + delay,
     };
 
     if (Object.keys(timers).length === 1) requestIdleCallback(check);
 
-    return id;
+    return timerId;
   };
 
-  window.myClearInterval = (id) => {
+  // clearInterval polyfill
+  globalThis.myClearInterval = function (id) {
     if (timers[id]) delete timers[id];
     return;
   };
@@ -51,9 +58,9 @@
 
 let count = 0;
 
-const id = window.mySetInterval(() => {
+const id = mySetInterval(() => {
   console.log(++count);
-  if (count === 5) window.myClearInterval(id);
+  if (count === 5) myClearInterval(id);
 }, 2000);
 
-console.log({ id });
+console.log(id);
