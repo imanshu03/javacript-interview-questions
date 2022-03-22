@@ -1,8 +1,15 @@
-const arr = [
+const input1 = [
   [9, 10],
   [1, 3],
   [6, 8],
   [2, 4]
+];
+
+const input2 = [
+  [6, 8],
+  [1, 9],
+  [2, 4],
+  [4, 7]
 ];
 
 function mergeMeetings(arr) {
@@ -22,4 +29,4 @@ function mergeMeetings(arr) {
   console.log("merged slots---", result);
 }
 
-mergeMeetings(arr);
+mergeMeetings(input2);
