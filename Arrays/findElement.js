@@ -1,3 +1,5 @@
+
+
 function findElement(array, key) {
   let maxCol = array[0].length;
   let maxRow = array.length;
@@ -29,4 +31,3 @@ const res = findElement(
   ],
   29
 );
-console.log(res);
